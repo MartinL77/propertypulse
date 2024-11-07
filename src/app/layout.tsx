@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Provider from "./provider";
-import Head from "next/head";
 import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
@@ -16,22 +15,13 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-    <html lang="en">
-      <Head>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-      <link 
-          href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Quicksand:wght@300..700&family=Roboto:wght@400;700;900&display=swap" 
-          rel="stylesheet" 
-        />
-      </Head>
-      <body>
-        <Provider>
-          {children}
-        </Provider>
-      </body>
-    </html>
+      <html lang="en">
+        <body>
+          <Provider>
+            {children}
+          </Provider>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }

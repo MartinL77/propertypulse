@@ -11,7 +11,7 @@ const Header: React.FC = () => {
 
     useEffect(() =>{
         console.log(path);
-    }, [[path]])
+    }, [path]);
 
     return (
         <>
