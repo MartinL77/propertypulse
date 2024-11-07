@@ -8,5 +8,8 @@ body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: 'Quicksand', sans-serif;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
 }
 
