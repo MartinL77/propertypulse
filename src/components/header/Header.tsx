@@ -17,12 +17,15 @@ const Header: React.FC = () => {
         <>
             <StyledNavContainer>
                     <StyledList>
-                        <Image src={"/property-pulse-logo.png"} alt={"logo"} width={250} height={80} style={{marginRight: '40px'}} />
+                        <Image src={"/propertypulse/property-pulse-logo.png"} alt={"logo"} width={250} height={80} style={{marginRight: '40px'}} />
                         <Link href={'/'} style={{textDecoration: 'none'}}><StyledListItem $isActive={path === '/'}>For Sale</StyledListItem></Link> {/* User clicks on purchase property and is prompted by settlement form */}
-                        <Link href={'/myportfolio'} style={{textDecoration: 'none'}}><StyledListItem $isActive={path === '/myportfolio'}>My Portfolio</StyledListItem></Link> {/* include pending settlements and settled properties */}
+                        <Link href={'/my-portfolio'} style={{textDecoration: 'none'}}><StyledListItem $isActive={path === '/my-portfolio/'}>My Portfolio</StyledListItem></Link> {/* include pending settlements and settled properties */}
+                        <Link href={'/saved-properties'} style={{textDecoration: 'none'}}><StyledListItem $isActive={path === '/saved-properties/'}>Saved Properties</StyledListItem></Link>
                     </StyledList>
                 <StyledButtonContainer>
-                    <StyledPostButton>Post</StyledPostButton>
+                    <Link href={"/add-new-listing"} >
+                        <StyledPostButton>Post</StyledPostButton>
+                    </Link>
                     <StyledLogButton>Log In</StyledLogButton>
                 </StyledButtonContainer>
             </StyledNavContainer>

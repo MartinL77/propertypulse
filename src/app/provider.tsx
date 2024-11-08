@@ -9,7 +9,9 @@ function Provider({children} : ProviderProps) {
     return (
         <div>
             <Header></Header>
-            {children}
+            <div style={{marginTop: '120px'}}>
+                {children}
+            </div>
         </div>
     )
 }

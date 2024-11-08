@@ -23,8 +23,8 @@ export const StyledListItem = styled.li<ListItemProps>`
     list-style-type: none;
     padding: 20px;
     color: ${({ $isActive }) => ($isActive ? 'rgb(195, 19, 166)' : '#1F2142')};
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 600;
     
     &:hover {
         color: rgb(195, 19, 166);
@@ -39,7 +39,6 @@ export const StyledButtonContainer = styled.div`
 export const StyledPostButton = styled.button`
     border-radius: 21.5px;
     padding: 10px 30px;
-    margin-right: 10px;
     width: 100%;
     color: rgb(65, 65, 65);
     border: 1px solid rgb(200, 200, 200);
@@ -58,6 +57,7 @@ export const StyledLogButton = styled.button`
     padding: 10px 30px;
     color: white;
     border-radius: 21.5px;
+    margin-left: 10px;
     width: 100%;
     border: 0;
     font-size: 16px;
