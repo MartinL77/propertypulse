@@ -5,7 +5,10 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDnsEfJ_v0V2KyQPz3Cryoy_n45a3UkUqc&libraries=places"></script>
+          <script 
+          defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDnsEfJ_v0V2KyQPz3Cryoy_n45a3UkUqc&libraries=places"
+          ></script>
           {/* Preconnect for fonts */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
