@@ -26,23 +26,23 @@ const GoogleAddressSearch: React.FC<GoogleAddressProps> = ({selectedAddress, set
                 </StyledImageContainer>
                 <GooglePlacesAutocomplete 
                     apiKey={process.env.NEXT_PUBLIC_GOOGLE_PLACE_API_KEY}
-                    // selectProps={{
-                    //     placeholder:'Search Property Address',
-                    //     isClearable:true,
-                    //     className: '',
-                    //     onChange:(place)=>{
-                    //         if (place) {
-                    //         console.log(place);
-                    //         selectedAddress(place);
-                    //         geocodeByAddress(place.label)
-                    //         .then(result=>getLatLng(result[0]))
-                    //         .then(({lat,lng})=>{
-                    //             setCoordinates({lat,lng})
-                    //         })
-                    //     } else {
-                    //         console.log("No place selected")
-                    //     }}
-                    // }}
+                    selectProps={{
+                        placeholder:'Search Property Address',
+                        isClearable:true,
+                        className: '',
+                        onChange:(place)=>{
+                            if (place) {
+                            console.log(place);
+                            selectedAddress(place);
+                            geocodeByAddress(place.label)
+                            .then(result=>getLatLng(result[0]))
+                            .then(({lat,lng})=>{
+                                setCoordinates({lat,lng})
+                            })
+                        } else {
+                            console.log("No place selected")
+                        }}
+                    }}
                 />
             </GooglePlacesContainer>
         </>
