@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext } from 'next';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../../../../utils/supabase/client'; 
 import { toast } from 'sonner';
 import { Formik } from 'formik';
@@ -16,52 +16,57 @@ interface FormValues {
   description: string;
 }
 
-export async function getServerSideProps({ params }: GetServerSidePropsContext<{ id: string }>) {
-  if (!params?.id) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const { data, error } = await supabase
-    .from('listing')
-    .select('*')
-    .eq('id', params.id)
-    .single();
-
-  if (error || !data) {
-    console.error(error);
-    return {
-      notFound: true, 
-    };
-  }
-
-  const initialValues: FormValues = {
-    propertyType: data.propertyType,
-    bedroom: data.bedroom,
-    bathroom: data.bathroom,
-    parking: data.parking,
-    lotSize: data.lotSize,
-    builtIn: data.builtIn,
-    area: data.area,
-    price: data.price,
-    description: data.description,
-  };
-
-  return {
-    props: {
-      initialValues,
-      listingId: params.id, 
-    },
-  };
+interface EditListingProps {
+  params: { id: string };
 }
 
-const EditListing: React.FC<{ initialValues: FormValues; listingId: string }> = ({ initialValues, listingId }) => {
+const EditListing: React.FC<EditListingProps> = ({ params }) => {
+  const [initialValues, setInitialValues] = useState<FormValues | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!params?.id) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('listing')
+        .select('*')
+        .eq('id', params.id)
+        .single();
+
+      if (error || !data) {
+        console.error(error);
+        setLoading(false);
+        return;
+      }
+
+      const initialValues: FormValues = {
+        propertyType: data.propertyType,
+        bedroom: data.bedroom,
+        bathroom: data.bathroom,
+        parking: data.parking,
+        lotSize: data.lotSize,
+        builtIn: data.builtIn,
+        area: data.area,
+        price: data.price,
+        description: data.description,
+      };
+
+      setInitialValues(initialValues);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [params?.id]);
+
   const onSubmitHandler = async (formValue: FormValues) => {
     const { data, error } = await supabase
       .from('listing')
       .update(formValue)
-      .eq('id', listingId)  
+      .eq('id', params.id)
       .select();
 
     if (data) {
@@ -75,11 +80,19 @@ const EditListing: React.FC<{ initialValues: FormValues; listingId: string }> = 
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!initialValues) {
+    return <div>Listing not found</div>;
+  }
+
   return (
     <>
       <h1>Enter some more details</h1>
       <Formik<FormValues>
-        initialValues={initialValues}  
+        initialValues={initialValues}
         onSubmit={(values) => {
           console.log('Form Submitted', values);
           onSubmitHandler(values);  
