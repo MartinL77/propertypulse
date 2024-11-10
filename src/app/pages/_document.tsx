@@ -5,9 +5,10 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <script 
-          defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDnsEfJ_v0V2KyQPz3Cryoy_n45a3UkUqc&libraries=places"
+        <script
+            async
+            defer
+            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACE_API_KEY}&libraries=places`}
           ></script>
           {/* Preconnect for fonts */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />
