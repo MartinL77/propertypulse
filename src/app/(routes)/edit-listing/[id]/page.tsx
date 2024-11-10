@@ -1,75 +1,88 @@
-'use client';
-
-import React, { useEffect } from 'react';
-import { Formik } from 'formik';
-import {
-  FormWrapper,
-  Label,
-  Select,
-  Input,
-  Button,
-  GridContainer,
-  TextArea,
-} from './editListing.styled';
-import { usePathname } from 'next/navigation';
-import { supabase } from '../../../../../utils/supabase/client';
+import { GetServerSidePropsContext } from 'next';
+import { supabase } from '../../../../../utils/supabase/client'; 
 import { toast } from 'sonner';
-import { GetStaticPropsContext } from 'next'
+import { Formik } from 'formik';
+import { FormWrapper, Label, Select, Input, Button, GridContainer, TextArea } from './editListing.styled';
 
 interface FormValues {
-    propertyType: string;
-    bedroom: string;
-    bathroom: string;
-    parking: string;
-    lotSize: string;
-    builtIn: string;
-    area: string;
-    price: string;
-    description: string;
+  propertyType: string;
+  bedroom: string;
+  bathroom: string;
+  parking: string;
+  lotSize: string;
+  builtIn: string;
+  area: string;
+  price: string;
+  description: string;
+}
+
+export async function getServerSideProps({ params }: GetServerSidePropsContext<{ id: string }>) {
+  if (!params?.id) {
+    return {
+      notFound: true,
+    };
   }
 
-const EditListing: React.FC = () => {
-    const params = usePathname();
+  const { data, error } = await supabase
+    .from('listing')
+    .select('*')
+    .eq('id', params.id)
+    .single();
 
-    useEffect(() => {
-        console.log(params.split('/')[2]);
-    }, [params])
+  if (error || !data) {
+    console.error(error);
+    return {
+      notFound: true, 
+    };
+  }
 
-    const onSubmitHandler = async (formValue: FormValues) => {
-        const { data, error } = await supabase
-        .from('listing')
-        .update(formValue)
-        .eq('id', params.split('/')[2])
-        .select()
+  const initialValues: FormValues = {
+    propertyType: data.propertyType,
+    bedroom: data.bedroom,
+    bathroom: data.bathroom,
+    parking: data.parking,
+    lotSize: data.lotSize,
+    builtIn: data.builtIn,
+    area: data.area,
+    price: data.price,
+    description: data.description,
+  };
 
-        if (data) {
-            console.log(data);
-            toast('Listing updated and published');
-        }
-        if (error) {
-            console.error(error);
-            toast('Error updating listing');
-        }
+  return {
+    props: {
+      initialValues,
+      listingId: params.id, 
+    },
+  };
+}
+
+const EditListing: React.FC<{ initialValues: FormValues; listingId: string }> = ({ initialValues, listingId }) => {
+  const onSubmitHandler = async (formValue: FormValues) => {
+    const { data, error } = await supabase
+      .from('listing')
+      .update(formValue)
+      .eq('id', listingId)  
+      .select();
+
+    if (data) {
+      console.log(data);
+      toast('Listing updated and published');
     }
+
+    if (error) {
+      console.error(error);
+      toast('Error updating listing');
+    }
+  };
 
   return (
     <>
       <h1>Enter some more details</h1>
       <Formik<FormValues>
-        initialValues={{
-          propertyType: '',
-          bedroom: '',
-          bathroom: '',
-          parking: '',
-          lotSize: '',
-          builtIn: '',
-          area: '',
-          price: '',
-          description: '',
-        }}
+        initialValues={initialValues}  
         onSubmit={(values) => {
-          console.log("Form Submitted", values);
-          onSubmitHandler(values);
+          console.log('Form Submitted', values);
+          onSubmitHandler(values);  
         }}
       >
         {({ values, handleChange, handleSubmit }) => (
@@ -178,67 +191,5 @@ const EditListing: React.FC = () => {
     </>
   );
 };
-
-// **Static Generation** for dynamic routes
-export async function getStaticPaths() {
-    const { data: listings, error } = await supabase.from('listing').select('id');
-  
-    if (error) {
-      console.error(error);
-      return {
-        paths: [],
-        fallback: false, 
-      };
-    }
-  
-    const paths = listings.map((listing) => ({
-      params: { id: listing.id.toString() },
-    }));
-  
-    return {
-      paths,
-      fallback: false, 
-    };
-  }
-  
-  export async function getStaticProps({ params }: GetStaticPropsContext<{ id: string }>) {
-    if (!params || !params.id) {
-        return {
-          notFound: true, 
-        };
-    }
-    
-    const { data, error } = await supabase
-      .from('listing')
-      .select('*')
-      .eq('id', params.id)
-      .single();
-  
-    if (error) {
-      console.error(error);
-      return {
-        notFound: true, 
-      };
-    }
-  
-    const initialValues: FormValues = {
-      propertyType: data.propertyType,
-      bedroom: data.bedroom,
-      bathroom: data.bathroom,
-      parking: data.parking,
-      lotSize: data.lotSize,
-      builtIn: data.builtIn,
-      area: data.area,
-      price: data.price,
-      description: data.description,
-    };
-  
-    return {
-      props: {
-        listingId: params.id,
-        initialValues,
-      },
-    };
-  }
 
 export default EditListing;
