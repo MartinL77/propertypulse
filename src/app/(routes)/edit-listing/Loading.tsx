@@ -3,7 +3,7 @@ import React from "react";
 const Loading: React.FC = () => {
     return (
         <>
-            <div>loading...</div>
+            <h1>Loading</h1>
         </>
     );
 }

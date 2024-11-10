@@ -8,7 +8,7 @@ import React from "react";
 export default function Home() {
   return (
     <div>
-      <h1>I LOVE YOU SANHDY TAU - MARTIN</h1>
+      HomePage
   </div>
   );
 }

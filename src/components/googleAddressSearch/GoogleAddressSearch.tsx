@@ -5,6 +5,7 @@ import { GooglePlacesContainer, StyledImageContainer } from "./GoogleAddressSear
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { geocodeByAddress, getLatLng } from "react-google-places-autocomplete";
+import { apiKey } from "../../../config";
 const GooglePlacesAutocomplete = dynamic(() => import("react-google-places-autocomplete"), { ssr: false });
 
 interface Place {
@@ -18,7 +19,6 @@ interface GoogleAddressProps {
 }
 
 const GoogleAddressSearch: React.FC<GoogleAddressProps> = ({ selectedAddress, setCoordinates }) => {
-    
     const loadGoogleMapsScript = () => {
         if (!window.google) {
             const script = document.createElement('script');
@@ -39,7 +39,7 @@ const GoogleAddressSearch: React.FC<GoogleAddressProps> = ({ selectedAddress, se
                 <Image src={"/propertypulse/location-pin.png"} alt={"location pin"} height={25} width={25} />
             </StyledImageContainer>
             <GooglePlacesAutocomplete 
-                apiKey={process.env.NEXT_PUBLIC_GOOGLE_PLACE_API_KEY}
+                apiKey={process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_GOOGLE_PLACE_API_KEY : apiKey}
                 selectProps={{
                     placeholder: 'Search Property Address',
                     isClearable: true,
