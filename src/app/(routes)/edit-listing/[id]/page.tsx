@@ -14,6 +14,7 @@ import {
 import { usePathname } from 'next/navigation';
 import { supabase } from '../../../../../utils/supabase/client';
 import { toast } from 'sonner';
+import { GetStaticPropsContext } from 'next'
 
 interface FormValues {
     propertyType: string;
@@ -177,5 +178,67 @@ const EditListing: React.FC = () => {
     </>
   );
 };
+
+// **Static Generation** for dynamic routes
+export async function getStaticPaths() {
+    const { data: listings, error } = await supabase.from('listing').select('id');
+  
+    if (error) {
+      console.error(error);
+      return {
+        paths: [],
+        fallback: false, 
+      };
+    }
+  
+    const paths = listings.map((listing) => ({
+      params: { id: listing.id.toString() },
+    }));
+  
+    return {
+      paths,
+      fallback: false, 
+    };
+  }
+  
+  export async function getStaticProps({ params }: GetStaticPropsContext<{ id: string }>) {
+    if (!params || !params.id) {
+        return {
+          notFound: true, 
+        };
+    }
+    
+    const { data, error } = await supabase
+      .from('listing')
+      .select('*')
+      .eq('id', params.id)
+      .single();
+  
+    if (error) {
+      console.error(error);
+      return {
+        notFound: true, 
+      };
+    }
+  
+    const initialValues: FormValues = {
+      propertyType: data.propertyType,
+      bedroom: data.bedroom,
+      bathroom: data.bathroom,
+      parking: data.parking,
+      lotSize: data.lotSize,
+      builtIn: data.builtIn,
+      area: data.area,
+      price: data.price,
+      description: data.description,
+    };
+  
+    return {
+      props: {
+        listingId: params.id,
+        initialValues,
+      },
+    };
+  }
 
 export default EditListing;
