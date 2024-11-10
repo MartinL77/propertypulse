@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { StyleSheetManager } from 'styled-components';  
 
@@ -6,5 +8,5 @@ export const StyledComponentsRegistry: React.FC<{ children: React.ReactNode }> =
     return <>{children}</>;  
   }
 
-  return <StyleSheetManager>{children}</StyleSheetManager>; 
+  return <StyleSheetManager>{children as React.ReactElement}</StyleSheetManager>; 
 };

@@ -4,10 +4,9 @@ import React, { useState } from "react";
 import { StyledListingHeading, StyledListingNextButton, StyledListingPageContainer, StyledListingSubHeading, StyledSearchContainer } from "./addNewListing.styled";
 import GoogleAddressSearch from "@/components/googleAddressSearch/GoogleAddressSearch";
 import { supabase } from "../../../../utils/supabase/client";
-import { create } from "domain";
 import { toast } from "sonner";
 import Loader from "./Loader";
-// import { useUser } from "@clerk/nextjs";
+import { useRouter } from 'next/navigation'; 
 
 interface Place {
   label: string;
@@ -23,7 +22,7 @@ const AddNewListing: React.FC = () => {
     const [selectedAddress, setSelectedAddress] = useState<Place | undefined>(undefined); 
     const [coordinates, setCoordinates] = useState<Coordinates | undefined>(undefined);
     const [loader, setLoader] = useState(false);
-    // const {user} = useUser(); add this when clerk is implemented
+    const router = useRouter();
 
     const nextHandler = async () => {
         const createdBy = 'supernoob727@gmail.com'
@@ -38,15 +37,16 @@ const AddNewListing: React.FC = () => {
                     coordinates: { lat: coordinates?.lat, lng: coordinates?.lng },
                     createdBy: createdBy,
                 }, 
-            ]);
+            ]).select('*');
     
         console.log("Supabase response:", { data, error });
     
         setLoader(false);  
     
-        if (data) {
+        if (data && !error && data.length > 0) {
             console.log("New data added:", data);
             toast("New Address added");
+            router.replace('/edit-listing/' + data[0].id);
         } else if (error) {
             console.log("Error:", error.message);
             toast("Server side error");

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Provider from "./provider";
 import { Toaster } from "sonner";
-// import { ClerkProvider } from "@clerk/nextjs";
+import { StyledComponentsRegistry } from "./StyledComponentsRegistry";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,15 +15,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // <ClerkProvider>
       <html lang="en">
         <body>
-          <Provider>
-            <Toaster />
-            {children}
-          </Provider>
+          <StyledComponentsRegistry>
+            <Provider>
+              <Toaster />
+              {children}
+            </Provider>
+          </StyledComponentsRegistry>
         </body>
       </html>
-    // </ClerkProvider>
   );
 }

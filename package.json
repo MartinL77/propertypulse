@@ -13,10 +13,12 @@
     "@supabase/supabase-js": "^2.46.1",
     "add": "^2.0.6",
     "axios": "^1.7.7",
+    "formik": "^2.4.6",
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
     "react-google-places-autocomplete": "^4.1.0",
+    "select": "^1.1.2",
     "shadcn": "^2.1.6",
     "sonner": "^1.7.0",
     "styled-components": "^6.1.13"
