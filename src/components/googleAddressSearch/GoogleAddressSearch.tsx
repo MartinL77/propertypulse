@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, { useEffect } from "react";
 import { GooglePlacesContainer, StyledImageContainer } from "./GoogleAddressSearch.styled";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -17,35 +17,49 @@ interface GoogleAddressProps {
     setCoordinates: (coords: { lat: number, lng: number }) => void;
 }
 
-const GoogleAddressSearch: React.FC<GoogleAddressProps> = ({selectedAddress, setCoordinates}) => {
+const GoogleAddressSearch: React.FC<GoogleAddressProps> = ({ selectedAddress, setCoordinates }) => {
+    
+    const loadGoogleMapsScript = () => {
+        if (!window.google) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACE_API_KEY}&libraries=places`;
+            script.async = true;
+            script.onload = () => console.log('Google Maps script loaded');
+            document.head.appendChild(script);
+        }
+    };
+
+    useEffect(() => {
+        loadGoogleMapsScript();
+    }, []);
+
     return (
-        <>
-            <GooglePlacesContainer>
-                <StyledImageContainer>
-                    <Image src={"/propertypulse/location-pin.png"} alt={"location pin"} height={25} width={25}></Image>
-                </StyledImageContainer>
-                <GooglePlacesAutocomplete 
-                    apiKey={process.env.NEXT_PUBLIC_GOOGLE_PLACE_API_KEY}
-                    selectProps={{
-                        placeholder:'Search Property Address',
-                        isClearable:true,
-                        className: '',
-                        onChange:(place)=>{
-                            if (place) {
+        <GooglePlacesContainer>
+            <StyledImageContainer>
+                <Image src={"/propertypulse/location-pin.png"} alt={"location pin"} height={25} width={25} />
+            </StyledImageContainer>
+            <GooglePlacesAutocomplete 
+                apiKey={process.env.NEXT_PUBLIC_GOOGLE_PLACE_API_KEY}
+                selectProps={{
+                    placeholder: 'Search Property Address',
+                    isClearable: true,
+                    className: '',
+                    onChange: (place) => {
+                        if (place) {
                             console.log(place);
                             selectedAddress(place);
                             geocodeByAddress(place.label)
-                            .then(result=>getLatLng(result[0]))
-                            .then(({lat,lng})=>{
-                                setCoordinates({lat,lng})
-                            })
+                                .then(result => getLatLng(result[0]))
+                                .then(({ lat, lng }) => {
+                                    setCoordinates({ lat, lng });
+                                });
                         } else {
-                            console.log("No place selected")
-                        }}
-                    }}
-                />
-            </GooglePlacesContainer>
-        </>
+                            console.log("No place selected");
+                        }
+                    }
+                }}
+            />
+        </GooglePlacesContainer>
     );
 }
 
