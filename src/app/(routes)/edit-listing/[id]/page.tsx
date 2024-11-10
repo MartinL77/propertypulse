@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { supabase } from '../../../../../utils/supabase/client'; 
 import { toast } from 'sonner';
 import { Formik } from 'formik';
 import { FormWrapper, Label, Select, Input, Button, GridContainer, TextArea } from './editListing.styled';
+import { useEffect, useState } from 'react';
 
 interface FormValues {
   propertyType: string;
@@ -19,7 +19,9 @@ interface FormValues {
 }
 
 interface EditListingProps {
-  params: { id: string };
+  params: {
+    id: string; 
+  };
 }
 
 const EditListing: React.FC<EditListingProps> = ({ params }) => {
@@ -64,11 +66,19 @@ const EditListing: React.FC<EditListingProps> = ({ params }) => {
     fetchData();
   }, [params?.id]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!initialValues) {
+    return <div>Listing not found</div>;
+  }
+
   const onSubmitHandler = async (formValue: FormValues) => {
     const { data, error } = await supabase
       .from('listing')
       .update(formValue)
-      .eq('id', params.id)
+      .eq('id', params.id)  
       .select();
 
     if (data) {
@@ -81,14 +91,6 @@ const EditListing: React.FC<EditListingProps> = ({ params }) => {
       toast('Error updating listing');
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!initialValues) {
-    return <div>Listing not found</div>;
-  }
 
   return (
     <>
