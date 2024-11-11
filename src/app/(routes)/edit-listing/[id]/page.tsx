@@ -1,105 +1,84 @@
 'use client';
 
-import { supabase } from '../../../../../utils/supabase/client'; 
-import { toast } from 'sonner';
+import React, { useEffect, useState } from 'react';
 import { Formik } from 'formik';
-import { FormWrapper, Label, Select, Input, Button, GridContainer, TextArea } from './editListing.styled';
-import { useEffect, useState } from 'react';
+import {
+  FormWrapper,
+  Label,
+  Select,
+  Input,
+  Button,
+  GridContainer,
+  TextArea,
+} from './editListing.styled';
+import { supabase } from '../../../../../utils/supabase/client';
+import { toast } from 'sonner';
 
 interface FormValues {
-  propertyType: string;
-  bedroom: string;
-  bathroom: string;
-  parking: string;
-  lotSize: string;
-  builtIn: string;
-  area: string;
-  price: string;
-  description: string;
+    propertyType: string;
+    bedroom: string;
+    bathroom: string;
+    parking: string;
+    lotSize: string;
+    builtIn: string;
+    area: string;
+    price: string;
+    description: string;
 }
 
 interface EditListingProps {
-  params: {
-    id: string; 
-  };
+  params: Promise<{ id: string }>;
 }
 
 const EditListing: React.FC<EditListingProps> = ({ params }) => {
-  const [initialValues, setInitialValues] = useState<FormValues | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [id, setId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!params?.id) {
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('listing')
-        .select('*')
-        .eq('id', params.id)
-        .single();
-
-      if (error || !data) {
-        console.error(error);
-        setLoading(false);
-        return;
-      }
-
-      const initialValues: FormValues = {
-        propertyType: data.propertyType,
-        bedroom: data.bedroom,
-        bathroom: data.bathroom,
-        parking: data.parking,
-        lotSize: data.lotSize,
-        builtIn: data.builtIn,
-        area: data.area,
-        price: data.price,
-        description: data.description,
-      };
-
-      setInitialValues(initialValues);
-      setLoading(false);
+    const resolveParams = async () => {
+      const resolvedParams = await params;
+      setId(resolvedParams.id);
     };
 
-    fetchData();
-  }, [params?.id]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!initialValues) {
-    return <div>Listing not found</div>;
-  }
+    resolveParams();
+  
+  }, [params])
 
   const onSubmitHandler = async (formValue: FormValues) => {
     const { data, error } = await supabase
-      .from('listing')
-      .update(formValue)
-      .eq('id', params.id)  
-      .select();
+    .from('listing')
+    .update(formValue)
+    .eq('id', id)
+    .select()
 
     if (data) {
-      console.log(data);
-      toast('Listing updated and published');
+        console.log(data);
+        toast('Listing updated and published');
     }
 
     if (error) {
-      console.error(error);
-      toast('Error updating listing');
+        console.error(error);
+        toast('Error updating listing');
     }
-  };
+  }
 
   return (
     <>
       <h1>Enter some more details</h1>
       <Formik<FormValues>
-        initialValues={initialValues}
+        initialValues={{
+          propertyType: '',
+          bedroom: '',
+          bathroom: '',
+          parking: '',
+          lotSize: '',
+          builtIn: '',
+          area: '',
+          price: '',
+          description: '',
+        }}
         onSubmit={(values) => {
-          console.log('Form Submitted', values);
-          onSubmitHandler(values);  
+          console.log("Form Submitted", values);
+          onSubmitHandler(values);
         }}
       >
         {({ values, handleChange, handleSubmit }) => (
